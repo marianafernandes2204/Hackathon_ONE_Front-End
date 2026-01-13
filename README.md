@@ -264,6 +264,10 @@ Response: { content: [...], page, totalElements }
 // Buscar cliente específico
 GET /clients/predictions/search/{clientId}
 Response: { clientId, churnStatus, probability, features }
+
+// Métricas do Dashboard
+GET /dashboard/metrics
+Response: { total_customers, global_churn_rate, customers_at_risk, revenue_at_risk, model_accuracy }
 ```
 
 ---
