@@ -1,103 +1,277 @@
+![Spotify](https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg)
+
+# **Projeto ChurnInsight – Spotify**
+
+## 📌 **Visão Geral do Projeto**
+
+Este projeto foi desenvolvido no contexto do **Hackathon ONE II** com o objetivo de criar uma solução completa de **Data Science aplicada ao negócio**, capaz de **prever a probabilidade de churn (cancelamento)** de clientes em serviços por assinatura.
+
+A solução simula um cenário real de plataformas de streaming, como o Spotify, permitindo que empresas **identifiquem clientes de alto risco antecipadamente**, apoiando estratégias de **retenção, redução de perdas financeiras e tomada de decisão baseada em dados**.
 
 
-<p align="center">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Spotify_logo_with_text.svg" width="250" alt="Spotify Logo">
-</p>
+## 🎯 **Problema de Negócio**
 
-<h1 align="center">Arquitetura do Projeto</h1>
+Empresas baseadas em modelos de assinatura enfrentam impactos financeiros significativos quando clientes cancelam seus serviços.
+
+Antecipar o churn possibilita:
+
+- Atuar preventivamente com ações de retenção  
+- Criar campanhas personalizadas e direcionadas  
+- Reduzir custos de aquisição de novos clientes  
+- Aumentar o Lifetime Value (LTV)  
+
+Neste contexto, **errar ao não identificar um cliente que irá cancelar (False Negative)** é mais crítico do que abordar um cliente que permaneceria ativo.
 
 
-### 1. 🧠 Camada de Inteligência e Dados
-O coração do projeto, onde reside o conhecimento estatístico.
-* **`.onnx` / `.pkl`**: Modelos treinados de Machine Learning. O formato ONNX é utilizado para garantir execução de baixa latência no ambiente de produção.
+## 💡 **Solução Proposta**
 
-* **`clients.json`**: Base de dados local (mock) simulando a resposta do banco de dados com 8.000 registros.
+Foi desenvolvido um **pipeline completo de Machine Learning**, com foco em **classificação binária**, capaz de estimar a probabilidade de churn de cada cliente.
 
-* **`metrics.json`**: Relatório de performance do modelo **Regressão Logística com SMOTE**, servindo de base para os gráficos de confiança da IA.
+**A solução contempla:**
+- Análise Exploratória de Dados (EDA)  
+- Engenharia de Features Avançada
+- Tratamento de dados (Metricas de Fricção)
+- Treinamento e Benchmarking
+- Validação de Estabilidade
+- Otimização de Decisão
+- Explicabilidade (XAI)
+- Serialização e preparação para consumo via backend 
 
-* **`contrato_api.json`**: Documentação técnica que define o formato de troca de dados entre o Frontend e o Backend.
+## 📊 **Dataset Utilizado**
 
-### 2. ⚙️ Lógica de Negócio e Serviços
-Camada intermediária que prepara os dados para a interface.
-* **`src/data/`**: Contém scripts de serviço ( `clients.js`, `metrics.js`) que filtram, formatam e limpam os dados brutos antes de chegarem à tela.
+- **Fonte:** Kaggle  
+- **Nome:** Spotify Dataset for Churn Analysis  
+- **Formato:** CSV  
+- **Variável alvo:** `is_churned`  (`0` = Cliente ativo  , `1` = Cliente cancelou )
 
-* **`src/hooks/`**: Custom Hooks (`useClients.js`, `useData.js`) que gerenciam o estado global, controle de carregamento (*loading*) e tratamento de erros.
+🔗 **Dataset:** [spotify_churn_dataset.csv](https://github.com/aluizr/Hackathon-ONE---Churn-clientes/blob/main/spotify_churn_dataset.csv)
 
-### 3. 🖼️ Interface Visual e Páginas
-A experiência do usuário e a visualização dos insights.
-* **`src/pages/Dashboard.jsx`**: O orquestrador da visualização, organizando o layout principal e a distribuição das informações.
+## 🧠 **Modelagem Preditiva e Avaliação**
 
-* **`src/components/`**: Peças modulares e reutilizáveis:
-    * `Charts.jsx`: Visualização gráfica de tendências de Churn.
-    * `MetricCard.jsx`: Indicadores rápidos de alta visibilidade.
-    * `ClientExplainability.jsx`: Interface de IA Explicável (XAI), detalhando o "porquê" de cada predição.
-* **`App.jsx` & `main.jsx`**: A fundação do React, responsável pela inicialização e rotas do sistema.
+Foram treinados e avaliados três modelos supervisionados:
 
-### 4. 🎨 Estética e Padronização
-Garantia de consistência visual e qualidade de código.
-* **`index.css`**: Estilos de base e reset de CSS para garantir consistência entre navegadores.
+- **Regressão Logística (com SMOTE)**  
+- **Random Forest**  
+- **Gradient Boosting**
 
-* **`theme.css`**: Definição de variáveis de cores e identidade visual (Design System).
+## 🎯 Estratégia de Avaliação
 
-* **`App.css`**: Regras de layout e estrutura de grid do container principal
+A otimização foi conduzida com foco em **Recall**, métrica mais adequada ao problema de churn, pois prioriza a **identificação correta de clientes que realmente irão cancelar**.
 
-* **`eslint.config.js`**: Padronização de código para manter o projeto limpo e legível.
+Além disso, foi realizado:
 
-### 5. 🛠️ Infraestrutura e Ambiente
-Configurações para desenvolvimento e deploy.
-* **`.venv`**: Ambiente virtual isolado para execução dos scripts de IA em Python.
+- Ajuste de Threshold Estratégico
+- Avaliação Multimétrica
+- Validação de Estabilidade (K-Fold)
 
-* **`.gitignore`**: Proteção do repositório, impedindo o envio de dependências pesadas (`node_modules`. `.venv`, `.vscode`), arquivos de sistema e segredos.
+## 🏆 Modelo Final Escolhido: **Regressão Logística com SMOTE**
 
-* **`dist/`**: Versão final otimizada para publicação (Build).
+**Motivos da escolha:**
+
+- Estabilidade Estatística
+- Foco em Retenção
+- Interpretabilidade e Transparência
+- Alinhamento Estratégico 
+
+## 🔍 **Explicabilidade do Modelo (XAI)**
+
+Para garantir **transparência e confiabilidade**, foi incorporada **explicabilidade com SHAP (SHapley Additive Explanations)**.
+
+Com SHAP, foi possível:
+
+- Entender quais variáveis mais influenciam o churn  
+- Explicar decisões do modelo em nível individual  
+- Analisar clientes de alto risco com justificativas claras  
+
+Esse recurso torna o modelo **auditável, interpretável e pronto para uso em ambiente corporativo**.
+
+## 🛠️ **Stack Tecnológico**
+
+### Linguagens & Ambiente
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
+![Java](https://img.shields.io/badge/Java-ED8B00?style=flat&logo=openjdk&logoColor=white)
+![Google Colab](https://img.shields.io/badge/Google_Colab-F9AB00?style=flat&logo=googlecolab&logoColor=white)
+![Kaggle](https://img.shields.io/badge/Kaggle-20BEFF?style=flat&logo=kaggle&logoColor=white)
+
+### Data Science & Machine Learning
+![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-150458?logo=pandas)
+![NumPy](https://img.shields.io/badge/NumPy-Numerical-013243?logo=numpy)
+![Scikit-learn](https://img.shields.io/badge/scikit--learn-ML-F7931E?logo=scikit-learn)
+![Matplotlib](https://img.shields.io/badge/Matplotlib-Visualization-11557C)
+![Seaborn](https://img.shields.io/badge/Seaborn-EDA-4C72B0)
+![SHAP](https://img.shields.io/badge/SHAP-XAI-FF0051)
+![Joblib](https://img.shields.io/badge/Joblib-Serialization-2A2A2A)
+![ONNX](https://img.shields.io/badge/ONNX-ML%20Model-005CED)
+![ONNX Runtime](https://img.shields.io/badge/ONNX%20Runtime-Inference-005CED)
+
+### Front-end & Visualização
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
+![Lucide React](https://img.shields.io/badge/Lucide_React-F43F5E?style=flat&logo=lucide&logoColor=white)
+![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?style=flat&logo=chartdotjs&logoColor=white)
+![Recharts](https://img.shields.io/badge/Recharts-222222?style=flat&logo=recharts&logoColor=24B5A8)
+
+### Backend
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?logo=springboot)
+![Spring Security](https://img.shields.io/badge/Spring%20Security-Auth-6DB33F)
+![JdbcTemplate](https://img.shields.io/badge/JdbcTemplate-DB-6DB33F)
+![Spring Actuator](https://img.shields.io/badge/Actuator-Monitoring-6DB33F)
+![Flyway](https://img.shields.io/badge/Flyway-Migrations-CC0200?logo=flyway)
+![Lombok](https://img.shields.io/badge/Lombok-Code%20Reduction-BC4521)
+
+### Banco de Dados
+![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?logo=mysql)
+
+### Testes
+![JUnit](https://img.shields.io/badge/JUnit-Testing-25A162?logo=junit5)
+
+### Versionamento
+![Git](https://img.shields.io/badge/Git-Version%20Control-F05032?logo=git)
+![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)
+
+##  ⚠️ Limitações do Estudo
+- Dataset sintético
+- Ausência de histórico temporal
+- Variáveis comportamentais agregadas
+
+## 🚀 **Notebook de Desenvolvimento**
+
+- [Google Colab](https://colab.research.google.com/drive/1p-BuXIIKo6MoKyuUHmpdqaRLwr7Xos24?usp=drive_link)
+
+## 🧩 **Repositórios do Projeto**
+
+- [Data Science](https://github.com/aluizr/Hackathon-ONE---Churn-clientes)
+- [Back-End (API REST)](https://github.com/Equipe-14-DataBeats-Hackaton-NoCountry/churninsight-api)
+- [Front-End](https://github.com/Equipe-14-DataBeats-Hackaton-NoCountry/Hackathon_ONE_Front-End)
+- [Repositório Oficial Unificado](https://github.com/orgs/Equipe-14-DataBeats-Hackaton-NoCountry/repositories)
+
+##  🔌 **Contrato da API**
+### Endpoint
+ - POST /predict
+
+#### Entrada (JSON)
+
+```json
+{
+        "gender": "Other",
+        "age": 27,
+        "country": "US",
+        "subscription_type": "Free",
+        "listening_time": 284,
+        "songs_played_per_day": 57,
+        "skip_rate": 0.14,
+        "device_type": "Desktop",
+        "ads_listened_per_week": 41,
+        "offline_listening": 0,
+        "songs_per_minute": 0.2,
+        "ad_intensity": 0.1025,
+        "frustration_index": 5.880000000000001,
+        "is_heavy_user": 1,
+        "premium_no_offline": 0
+    }
+```
+#### Saída
+```
+{
+        "prediction": "Não Vai Cancelar",
+        "probability": 0.2556,
+        "decision_threshold": 0.262755,
+        "ai_diagnosis": {
+            "primary_risk_factor": "Anúncios por Semana",
+            "primary_retention_factor": "Uso Offline",
+            "suggested_action": "Manter fluxo padrão"
+        }
+```
+
+##  🔌 **Metadado de Governança (Model Card)**
+### Endpoint
+ - POST /predict
+```
+{
+    "name": "Spotify Churn Model",
+    "version": "1.0",
+    "model_type": "Logistic Regression with SMOTE",
+    "accuracy": 0.6488,
+    "recall": 0.3043,
+    "precision": 0.315,
+    "f1_score": 0.3096,
+    "auc_roc": 0.544,
+    "threshold_otimo": 0.262755,
+    "numeric_features": [
+        "age",
+        "listening_time",
+        "songs_played_per_day",
+        "skip_rate",
+        "ads_listened_per_week",
+        "offline_listening",
+        "songs_per_minute",
+        "ad_intensity",
+        "frustration_index",
+        "is_heavy_user",
+        "premium_no_offline"
+    ],
+    "categorical_features": [
+        "gender",
+        "country",
+        "subscription_type",
+        "device_type"
+    ],
+}
+```
+
+
+## 📦 **BACKEND**
+
+- Integração completa com API REST  
+- Endpoint `/predict` consumindo modelo ONNX  
+- Persistência de previsões  
+- Dashboard de risco de churn    
+
+
+## 🔄 **Status do Projeto**
+
+### **DATA SCIENCE & ML** 
+
+- **MVP funcional** - Modelo treinado e validado.
+- **Modelo explicável** - Implementação de SHAP para transparência.
+- **Integração** - Pipeline pronto para consumo de dados.  
+
+
+### **BACKEND & API** 
+
+- **API REST** - Estrutura completa com autenticação.
+- **Segurança** - Endpoints protegidos com *HTTP Basic Auth*.
+- **Conectividade** - Pronta para integração com Data Science.
+- **Qualidade** - Contrato de API definido e 100% testado.
+
+
+## 👥 Equipe do Projeto – Hackathon ONE II
+**Time Back-End**
+- Ezandro Bueno 
+- Jorge Filipi Dias 
+- Wanderson Souza 
+- Wendell Dorta 
+
+**Time Data Science**
+- André Ribeiro 
+- Kelly Muehlmann 
+- Luiz Alves 
+- Mariana Fernandes 
+
+
+## 📂 **Documentação do Desafio**
+
+>- [Desafio do Hackathon](https://www.icloud.com/iclouddrive/047o_p2lktHdbUlYzFH2yxYMQ)
+>- [Dataset .csv](https://github.com/aluizr/Hackathon-ONE---Churn-clientes/blob/main/spotify_churn_dataset.csv)
+>- [Pitch Mariana](https://docs.google.com/document/d/1o8inoTVSSmdyvmz6oGd0lFNzxK478OdQ/edit?usp=drive_link&ouid=103855940170812890254&rtpof=true&sd=true)
+>- [Pitch Kelly](https://docs.google.com/document/d/1PhcgM4e9fYM3pfVr134mwVsmtMFBo0y3/edit)
+>- [Pitch Kelly e Wendell](https://docs.google.com/document/d/1J49rCNljW4kdGeT9-awK3D35rKoXotzX/edit)
+>- [Pitch Wanderson](https://drive.google.com/drive/folders/1sTAKk_HtIoHnMkVeLfTVeXNwijBdGrEp)
+>- [Pitch Ezandro](https://drive.google.com/file/d/1EdTUSOoy459_gHtPULBng892AVCWlhr5/view)
+>- [Gamma](https://gamma.app/docs/Hackathon-ONE-II-kqtvg41hk6ldei5?mode=doc)
 
 ---
+## 👥 **Projeto desenvolvido para o Hackathon ONE II (2026)**
+🚀 Evolução contínua durante o Hackathon ONE II.
 
-## 🛠️ Tecnologias Utilizadas
-- **React 18** + **Vite**
-- **Tailwind CSS** (Estilização)
-- **Recharts** (Visualização de Dados)
-- **ONNX Runtime** (Execução do Modelo de IA)
-- **Python** (Backend e Treino do Modelo)
-
-> *Este projeto foi desenvolvido seguindo boas práticas de "Separation of Concerns" (Separação de Responsabilidades), garantindo facilidade na manutenção e escalabilidade técnica.*
->
-## 📁 Estrutura de Pastas
-```text
-Front-End/
-├── .venv/                   # Ambiente virtual Python (isolamento de bibliotecas)
-├── .vscode/                 # Configurações personalizadas do editor VS Code
-├── dist/                    # Pasta de distribuição (build otimizado para produção)
-│   └── assets/              # Arquivos JS e CSS minificados e processados
-├── node_modules/            # Dependências instaladas via NPM (gerenciadas pelo package.json)
-├── public/                  # Assets estáticos acessíveis via URL direta
-│   ├── clients.json         # Dados brutos dos clientes (mock database)
-│   ├── metrics.json         # Métricas de performance da IA
-│   └── Spotify.png          # Assets de imagem públicos
-├── src/                     # Código-fonte principal da aplicação
-│   ├── assets/              # Mídias utilizadas internamente nos componentes
-│   ├── components/          # Peças reutilizáveis da interface (Charts, Cards, XAI)
-│   │   ├── Charts.jsx                    # Gráficos
-│   │   ├── ClientExplainability.jsx      # IA, XAI
-│   │   └── MetricCard.jsx                # Resumo rápido (Topo página web)
-│   ├── data/                # Camada de tratamento e serviços de dados
-│   │   ├── clients.js
-│   │   └── metrics.js
-│   ├── hooks/               # Lógica de estado e conexão com API (Custom Hooks)
-│   │   ├── useClients.js
-│   │   └── useData.js
-│   ├── pages/               # Visualizações e telas completas
-│   │   └── Dashboard.jsx    # Organiza onde e quando cada coisa deve aparecer
-│   ├── styles/              # Arquivos de estilização centralizados
-│   │   └── theme.css        # Cores e identidade visual (Design System)
-│   ├── App.css              # Estilos de estrutura e layout principal
-│   ├── app.jsx              # Componente raiz da aplicação
-│   ├── index.css            # Estilos de base e reset global
-│   └── main.jsx             # Ponto de entrada (conector React + DOM)
-├── .gitignore               # Regras de exclusão para o controle de versão
-├── contrato_api.json        # Definição técnica da comunicação Front/Back
-├── eslint.config.js         # Regras de padronização e qualidade de código
-├── modelo_churn.pkl         # Modelo de ML original (Python)
-├── modelo_hackathon.onnx    # Modelo de ML otimizado para execução
-├── package.json             # Manifesto do projeto e lista de dependências
-└── vite.config.js           # Configurações do motor de build Vite
